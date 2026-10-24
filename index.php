@@ -12,7 +12,7 @@ hien_dau_trang('Trang chủ');
     <div class="rong">
         <h1>Đặt lịch khám bệnh trực tuyến</h1>
         <p>Chọn bác sĩ, chọn giờ khám ngay tại nhà. Nhanh chóng, không cần xếp hàng chờ đợi.</p>
-        <a href="dang_nhap.php" class="nut-lon">Đặt lịch khám</a>
+        <a href="dat_lich.php" class="nut-lon">Đặt lịch khám</a>
     </div>
 </section>
 

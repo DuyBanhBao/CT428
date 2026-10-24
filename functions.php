@@ -1,6 +1,6 @@
 <?php
 session_start();
-
+date_default_timezone_set('Asia/Ho_Chi_Minh');
 
 function h($s) {
     return htmlspecialchars($s ?? '', ENT_QUOTES, 'UTF-8');
@@ -33,6 +33,10 @@ function hien_dau_trang($tieude) {
             <a href="index.php">Trang chủ</a>
             <a href="index.php#chuyen-khoa">Chuyên khoa</a>
             <a href="index.php#bac-si">Bác sĩ</a>
+            <a href="dat_lich.php">Đặt lịch</a>
+            <?php if (isset($_SESSION['id'])): ?>
+                <a href="lich_cua_toi.php">Lịch khám của tôi</a>
+            <?php endif; ?>
         </nav>
         <div class="tai-khoan">
             <?php hien_khu_tai_khoan(); ?>
@@ -123,4 +127,78 @@ function lay_chuyen_khoa($conn) {
 function lay_bac_si($conn) {
     $ketqua = $conn->query("SELECT * FROM BacSi ORDER BY ID");
     return $ketqua->fetch_all(MYSQLI_ASSOC);
+}
+
+function bat_buoc_dang_nhap() {
+    if (!isset($_SESSION['id'])) {
+        header("Location: dang_nhap.php");
+        exit;
+    }
+}
+
+//  in một ô chọn danh sách thả xuống
+function chon($nhan, $ten, $luachon, $giatri = '') {
+    ?>
+    <label for="<?php echo h($ten); ?>"><?php echo h($nhan); ?></label>
+    <select id="<?php echo h($ten); ?>" name="<?php echo h($ten); ?>" required>
+        <option value="">-- Chọn --</option>
+        <?php foreach ($luachon as $ma => $chu): ?>
+            <option value="<?php echo h($ma); ?>" <?php if ((string)$ma === (string)$giatri) { echo 'selected'; } ?>>
+                <?php echo h($chu); ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+    <?php
+}
+
+function trong_gio_lam_viec($gio) {
+    if (date('N', $gio) == 7) {
+        return false;                                 
+    }
+    $phut = (int)date('G', $gio) * 60 + (int)date('i', $gio);   // số phút tính từ 00:00
+    return $phut >= 7 * 60 + 30 && $phut <= 16 * 60 + 30;
+}
+
+function bac_si_ban($conn, $id_bacsi, $thoigian) {
+    $stmt = $conn->prepare("SELECT ID FROM LichKham WHERE ID_BacSi=? AND ThoiGian=? AND TrangThai NOT IN ('Đã hủy', 'Từ chối')");
+    $stmt->bind_param("is", $id_bacsi, $thoigian);
+    $stmt->execute();
+    return $stmt->get_result()->fetch_assoc() ? true : false;
+}
+
+function luu_lich_kham($conn, $id_benhnhan, $id_bacsi, $thoigian, $lydo) {
+    $stmt = $conn->prepare("INSERT INTO LichKham (ID_BenhNhan, ID_BacSi, ThoiGian, LyDo) VALUES (?,?,?,?)");
+    $stmt->bind_param("iiss", $id_benhnhan, $id_bacsi, $thoigian, $lydo);
+    $stmt->execute();
+}
+
+function lay_lich_cua_toi($conn, $id_benhnhan) {
+    $stmt = $conn->prepare(
+        "SELECT l.ID, l.ThoiGian, l.LyDo, l.TrangThai, b.HoTen AS TenBacSi, b.ChuyenKhoa
+         FROM LichKham l
+         JOIN BacSi b ON l.ID_BacSi = b.ID
+         WHERE l.ID_BenhNhan=?
+         ORDER BY l.ThoiGian DESC"
+    );
+    $stmt->bind_param("i", $id_benhnhan);
+    $stmt->execute();
+    return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+}
+
+// huy duoc = true, khong duoc = false, chi huy duoc lich cua minh va cho xac nhan
+function huy_lich($conn, $id_lich, $id_benhnhan) {
+    $stmt = $conn->prepare("UPDATE LichKham SET TrangThai='Đã hủy' WHERE ID=? AND ID_BenhNhan=? AND TrangThai='Chờ xác nhận'");
+    $stmt->bind_param("ii", $id_lich, $id_benhnhan);
+    $stmt->execute();
+    return $stmt->affected_rows > 0;
+}
+
+function lop_trang_thai($trangthai) {
+    if ($trangthai == 'Chờ xác nhận') {
+        return 'tt-cho';
+    }
+    if ($trangthai == 'Đã xác nhận') {
+        return 'tt-xacnhan';
+    }
+    return 'tt-huy';
 }

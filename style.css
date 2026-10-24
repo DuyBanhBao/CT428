@@ -28,7 +28,6 @@ main {
   padding: 0 20px;
 }
 
-/* Thanh trên cùng  */
 .thanh-tren {
   background: var(--chinh-dam);
   color: #fff;
@@ -100,7 +99,6 @@ main {
   background: var(--nen-nhat);
 }
 
-/* Chân trang*/
 .chan-trang {
   background: var(--chu);
   color: #cbd5e1;
@@ -115,7 +113,7 @@ main {
   color: #fff;
 }
 
-/*  Form đăng ký đăng nhập= */
+/*  Form  */
 .khung {
   background: #fff;
   padding: 30px;
@@ -192,7 +190,6 @@ main {
   text-decoration: underline;
 }
 
-/*  Trang chủ */
 .banner {
   background: linear-gradient(135deg, var(--chinh), var(--chinh-dam));
   color: #fff;
@@ -263,4 +260,65 @@ main {
   color: var(--chinh);
   font-weight: bold;
   font-size: 18px;
+}
+
+.khung select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+}
+.bang-cuon {
+  overflow-x: auto;
+}
+.bang {
+  width: 100%;
+  border-collapse: collapse;
+}
+.bang th,
+.bang td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--vien);
+  text-align: left;
+  font-size: 14px;
+}
+.bang th {
+  background: var(--nen-nhat);
+  color: var(--chinh-dam);
+}
+.trangthai {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: bold;
+}
+.tt-cho {
+  background: #fff4e0;
+  color: #b26a00;
+}
+.tt-xacnhan {
+  background: #e8f5e9;
+  color: #1e7e34;
+}
+.tt-huy {
+  background: #fdeaea;
+  color: #b02a37;
+}
+.nut-huy {
+  padding: 5px 12px;
+  background: #fff;
+  color: #dc3545;
+  border: 1px solid #dc3545;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.nut-huy:hover {
+  background: #fdeaea;
+}
+.trong {
+  text-align: center;
+  color: var(--xam);
 }
