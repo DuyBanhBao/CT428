@@ -322,3 +322,27 @@ main {
   text-align: center;
   color: var(--xam);
 }
+
+.the .nut-nho {
+  display: inline-block;
+  margin-top: 12px;
+}
+.bo-loc {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.bo-loc select {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+.bo-loc button {
+  cursor: pointer;
+}
+
+.khung input:disabled {
+  background: #f1f3f5;
+  color: var(--xam);
+}

@@ -1,6 +1,5 @@
 <?php
-require_once 'connect.php';
-require_once 'functions.php';
+require_once 'includes/khoitao.php';
 
 // lay du lieu tu db
 $dsChuyenKhoa = lay_chuyen_khoa($conn);

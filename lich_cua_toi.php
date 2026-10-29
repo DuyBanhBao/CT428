@@ -1,27 +1,7 @@
 <?php
-require_once 'connect.php';
-require_once 'functions.php';
+require_once 'includes/khoitao.php';
 
-bat_buoc_dang_nhap();
-
-$loi = "";
-$thongbao = "";
-
-// xu ly loi khi bam huy
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['huy'])) {
-    if (huy_lich($conn, (int)$_POST['huy'], $_SESSION['id'])) {
-        header("Location: lich_cua_toi.php?huy=ok");
-        exit;
-    }
-    $loi = "Không thể hủy lịch này.";
-}
-
-if (isset($_GET['dat'])) {
-    $thongbao = "Đặt lịch thành công! Lịch của bạn đang chờ xác nhận.";
-}
-if (isset($_GET['huy'])) {
-    $thongbao = "Đã hủy lịch khám.";
-}
+bat_buoc_benh_nhan();
 
 $dsLich = lay_lich_cua_toi($conn, $_SESSION['id']);
 
@@ -30,10 +10,7 @@ hien_dau_trang('Lịch khám của tôi');
 <section class="khu rong">
     <h2 class="tieu-de-khu">Lịch khám của tôi</h2>
 
-    <?php
-    hien_thong_bao($thongbao, 'ok');
-    hien_thong_bao($loi, 'loi');
-    ?>
+    <?php hien_thong_bao_phien(); ?>
 
     <?php if (count($dsLich) == 0): ?>
         <p class="trong">Bạn chưa có lịch khám nào. <a href="dat_lich.php">Đặt lịch ngay</a></p>
@@ -56,12 +33,13 @@ hien_dau_trang('Lịch khám của tôi');
                         <td><?php echo h($l['LyDo']); ?></td>
                         <td>
                             <span class="trangthai <?php echo lop_trang_thai($l['TrangThai']); ?>">
-                                <?php echo h($l['TrangThai']); ?>
+                                <?php echo h(ten_trang_thai($l['TrangThai'])); ?>
                             </span>
                         </td>
                         <td>
-                            <?php if ($l['TrangThai'] == 'Chờ xác nhận'): ?>
-                                <form method="post" onsubmit="return confirm('Bạn chắc chắn muốn hủy lịch này?');">
+                            <?php if ($l['TrangThai'] == 'cho_xac_nhan'): ?>
+                                <form method="post" action="xuly/xuly_huy_lich.php"
+                                      onsubmit="return confirm('Bạn chắc chắn muốn hủy lịch này?');">
                                     <button type="submit" name="huy" value="<?php echo h($l['ID']); ?>" class="nut-huy">Hủy</button>
                                 </form>
                             <?php endif; ?>

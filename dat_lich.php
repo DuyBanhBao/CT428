@@ -1,44 +1,23 @@
 <?php
-require_once 'connect.php';
-require_once 'functions.php';
+require_once 'includes/khoitao.php';
 
-bat_buoc_dang_nhap();
+bat_buoc_benh_nhan();
 
-$loi = "";
-$thoigian = "";
-$lydo = "";
-$bacsi_chon = $_GET['bacsi'] ?? '';
+$cu = lay_du_lieu_cu();                        // lựa chọn lần trước (nếu bị lỗi)
+$id_bacsi = (int)($_GET['bacsi'] ?? 0);        // bác sĩ đang chọn (0 = chưa chọn)
 
-// doi ds bacsi => id - ten
-$luachon = [];
+// Danh sách bác sĩ cho ô chọn: [ID => "Tên - Chuyên khoa"]
+$ds_bacsi = [];
 foreach (lay_bac_si($conn) as $bs) {
-    $luachon[$bs['ID']] = $bs['HoTen'] . ' - ' . $bs['ChuyenKhoa'];
+    $ds_bacsi[$bs['ID']] = $bs['HoTen'] . ' - ' . $bs['ChuyenKhoa'];
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $bacsi_chon = $_POST['bacsi'] ?? '';
-    $thoigian = $_POST['thoigian'] ?? '';
-    $lydo = trim($_POST['lydo'] ?? '');
-
-    // doi chuoi ngay gio thanh 1 so, sai dinh dang = false
-    $gio = strtotime($thoigian);
-
-    if (!isset($luachon[$bacsi_chon])) {
-        $loi = "Vui lòng chọn bác sĩ.";
-    } elseif ($gio === false) {
-        $loi = "Ngày giờ khám không hợp lệ.";
-    } elseif ($gio <= time()) {
-        $loi = "Ngày giờ khám phải ở tương lai.";
-    } elseif (!trong_gio_lam_viec($gio)) {
-        $loi = "Phòng khám làm việc từ thứ 2 đến thứ 7, 07:30 - 16:30.";
-    } elseif (mb_strlen($lydo) > 255) {
-        $loi = "Lý do khám tối đa 255 ký tự.";
-    } elseif (bac_si_ban($conn, $bacsi_chon, date('Y-m-d H:i:s', $gio))) {
-        $loi = "Bác sĩ đã có lịch vào giờ này, vui lòng chọn giờ khác.";
-    } else {
-        luu_lich_kham($conn, $_SESSION['id'], $bacsi_chon, date('Y-m-d H:i:s', $gio), $lydo);
-        header("Location: lich_cua_toi.php?dat=ok");
-        exit;
+// Đã chọn bác sĩ thì lấy các khung giờ còn trống: [ID khung giờ => "dd/mm/yyyy hh:mm - hh:mm"]
+$ds_gio = [];
+if (isset($ds_bacsi[$id_bacsi])) {
+    foreach (lay_gio_trong($conn, $id_bacsi) as $g) {
+        $ds_gio[$g['malichlamviec']] = date('d/m/Y H:i', strtotime($g['thoigianbatdau']))
+            . ' - ' . date('H:i', strtotime($g['thoigianketthuc']));
     }
 }
 
@@ -47,16 +26,30 @@ hien_dau_trang('Đặt lịch khám');
 <div class="khung">
     <h2>Đặt lịch khám</h2>
 
-    <?php hien_thong_bao($loi, 'loi'); ?>
+    <?php hien_thong_bao_phien(); ?>
 
-    <form method="post">
-        <?php
-        chon('Bác sĩ *', 'bacsi', $luachon, $bacsi_chon);
-        nhap('Ngày giờ khám *', 'thoigian', 'datetime-local', $thoigian);
-        nhap('Lý do khám', 'lydo', 'text', $lydo, false);
-        ?>
-        <button type="submit" class="nut nut-luc">Xác nhận đặt lịch</button>
+    <!-- Bước 1: chọn bác sĩ (GET, chỉ để xem giờ trống) -->
+    <form method="get">
+        <?php chon('Bác sĩ *', 'bacsi', $ds_bacsi, $id_bacsi); ?>
+        <button type="submit" class="nut">Xem giờ trống</button>
     </form>
+
+    <?php if (isset($ds_bacsi[$id_bacsi])): ?>
+        <hr>
+        <?php if (count($ds_gio) == 0): ?>
+            <p class="trong">Bác sĩ này hiện chưa có khung giờ trống.</p>
+        <?php else: ?>
+            <!-- Bước 2: chọn khung giờ (POST sang file xử lý) -->
+            <form method="post" action="xuly/xuly_dat_lich.php">
+                <?php
+                o_an('bacsi', $id_bacsi);
+                chon('Khung giờ khám *', 'giokham', $ds_gio, $cu['giokham'] ?? '');
+                nhap('Lý do khám', 'lydo', 'text', $cu['lydo'] ?? '', false);
+                ?>
+                <button type="submit" class="nut nut-luc">Xác nhận đặt lịch</button>
+            </form>
+        <?php endif; ?>
+    <?php endif; ?>
 
     <a class="lien-ket" href="lich_cua_toi.php">Xem lịch khám của tôi</a>
 </div>
