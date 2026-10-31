@@ -1,10 +1,9 @@
 <?php
 require_once __DIR__ . '/../includes/khoitao.php';
 
-if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-    chuyen_trang('../dang_nhap.php');
+if (isset($_SESSION['id'])) {
+    chuyen_trang(trang_chu_theo_vai_tro($_SESSION['vaitro']));
 }
-
 $sdt = trim($_POST['sdt'] ?? '');
 $matkhau = $_POST['matkhau'] ?? '';
 
@@ -29,4 +28,4 @@ $_SESSION['id'] = $user['ID'];
 $_SESSION['hoten'] = $user['HoTen'];
 $_SESSION['vaitro'] = $user['VaiTro'];   // 'benh_nhan', 'bac_si' hoặc 'quan_tri'
 
-chuyen_trang('../index.php');
+chuyen_trang('../' . trang_chu_theo_vai_tro($_SESSION['vaitro']));

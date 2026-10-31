@@ -36,5 +36,8 @@ hien_dau_trang('Đội ngũ bác sĩ');
         </div>
     <?php endif; ?>
 </section>
+<br>
+<br>
+<br>
 <?php
 hien_cuoi_trang();

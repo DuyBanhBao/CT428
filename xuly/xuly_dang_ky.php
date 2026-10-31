@@ -2,8 +2,8 @@
 require_once __DIR__ . '/../includes/khoitao.php';
 
 // File này chỉ XỬ LÝ, không in HTML. Chỉ nhận dữ liệu gửi bằng POST.
-if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-    chuyen_trang('../dang_ky.php');
+if (isset($_SESSION['id'])) {
+    chuyen_trang(trang_chu_theo_vai_tro($_SESSION['vaitro']));
 }
 
 $hoten = trim($_POST['hoten'] ?? '');

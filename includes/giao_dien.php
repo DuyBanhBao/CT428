@@ -30,13 +30,7 @@ function hien_dau_trang($tieude) {
     <div class="rong dau-trang-ben-trong">
         <a href="index.php" class="logo"> Đặt Lịch Khám Bệnh</a>
         <nav class="menu">
-            <a href="index.php">Trang chủ</a>
-            <a href="index.php#chuyen-khoa">Chuyên khoa</a>
-            <a href="bac_si.php">Bác sĩ</a>
-            <a href="dat_lich.php">Đặt lịch</a>
-            <?php if (isset($_SESSION['id'])): ?>
-                <a href="lich_cua_toi.php">Lịch khám của tôi</a>
-            <?php endif; ?>
+            <?php hien_menu(); ?>
         </nav>
         <div class="tai-khoan">
             <?php hien_khu_tai_khoan(); ?>
@@ -121,6 +115,7 @@ function hien_the($bieutuong, $tieude, $mota = '', $lienket = '', $chu_lienket =
             <p><?php echo h($mota); ?></p>
         <?php endif; ?>
         <?php if ($lienket != ""): ?>
+            <br>
             <a href="<?php echo h($lienket); ?>" class="nut-nho"><?php echo h($chu_lienket); ?></a>
         <?php endif; ?>
     </div>
@@ -162,5 +157,27 @@ function hien_thong_bao_phien() {
 function o_an($ten, $giatri) {
     ?>
     <input type="hidden" name="<?php echo h($ten); ?>" value="<?php echo h($giatri); ?>">
+    <?php
+}
+
+// In các mục menu, đổi theo vai trò của người đang đăng nhập
+function hien_menu() {
+    $vaitro = $_SESSION['vaitro'] ?? '';   // '' nghĩa là khách chưa đăng nhập
+    ?>
+    <?php if ($vaitro == 'quan_tri'): ?>
+        <a href="qt_trang_chu.php">Tổng quan</a>
+        <a href="qt_nguoi_dung.php">Người dùng</a>
+        <a href="qt_bac_si.php">Quản lý bác sĩ</a>
+    <?php else: ?>
+        <a href="index.php">Trang chủ</a>
+        <a href="index.php#chuyen-khoa">Chuyên khoa</a>
+        <a href="bac_si.php">Bác sĩ</a>
+        <?php if ($vaitro == '' || $vaitro == 'benh_nhan'): ?>
+            <a href="dat_lich.php">Đặt lịch</a>
+        <?php endif; ?>
+        <?php if ($vaitro == 'benh_nhan'): ?>
+            <a href="lich_cua_toi.php">Lịch khám của tôi</a>
+        <?php endif; ?>
+    <?php endif; ?>
     <?php
 }

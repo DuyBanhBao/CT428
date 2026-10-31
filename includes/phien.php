@@ -18,12 +18,21 @@ function bat_buoc_dang_nhap($goc = '') {
     }
 }
 
-// Chỉ bệnh nhân mới được vào
-function bat_buoc_benh_nhan($goc = '') {
+// Hàm chung: bắt đăng nhập, rồi bắt đúng vai trò. Sai vai trò thì về trang chủ.
+function bat_buoc_vai_tro($vaitro, $goc = '') {
     bat_buoc_dang_nhap($goc);
-    if ($_SESSION['vaitro'] != 'benh_nhan') {
+    if ($_SESSION['vaitro'] != $vaitro) {
         chuyen_trang($goc . 'index.php');
     }
+}
+
+// Hai hàm dưới chỉ là "lối tắt" gọi hàm chung ở trên
+function bat_buoc_benh_nhan($goc = '') {
+    bat_buoc_vai_tro('benh_nhan', $goc);
+}
+
+function bat_buoc_quan_tri($goc = '') {
+    bat_buoc_vai_tro('quan_tri', $goc);
 }
 
 // Ghi một lời nhắn để hiện ở trang kế tiếp. $loai là 'loi' hoặc 'ok'
@@ -43,4 +52,12 @@ function lay_du_lieu_cu() {
     $cu = $_SESSION['du_lieu_cu'] ?? [];
     unset($_SESSION['du_lieu_cu']);
     return $cu;
+}
+
+// Trang đầu tiên của mỗi vai trò sau khi đăng nhập
+function trang_chu_theo_vai_tro($vaitro) {
+    if ($vaitro == 'quan_tri') {
+        return 'qt_trang_chu.php';
+    }
+    return 'index.php';   // bệnh nhân (và vai trò chưa có trang riêng)
 }
