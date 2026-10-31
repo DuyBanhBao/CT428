@@ -181,3 +181,27 @@ function hien_menu() {
     <?php endif; ?>
     <?php
 }
+
+// In một ô nhập nhiều dòng
+function o_nhieu_dong($nhan, $ten, $giatri = '') {
+    ?>
+    <label for="<?php echo h($ten); ?>"><?php echo h($nhan); ?></label>
+    <textarea id="<?php echo h($ten); ?>" name="<?php echo h($ten); ?>" rows="4"><?php echo h($giatri); ?></textarea>
+    <?php
+}
+
+// In một nhóm ô tích chọn. $luachon dạng [mã => tên], $da_chon là mảng các mã đang được tích
+function o_tich_chon($nhan, $ten, $luachon, $da_chon = []) {
+    ?>
+    <label><?php echo h($nhan); ?></label>
+    <div class="nhom-tich">
+        <?php foreach ($luachon as $ma => $chu): ?>
+            <label class="o-tich">
+                <input type="checkbox" name="<?php echo h($ten); ?>[]" value="<?php echo h($ma); ?>"
+                    <?php if (in_array($ma, $da_chon)) { echo 'checked'; } ?>>
+                <?php echo h($chu); ?>
+            </label>
+        <?php endforeach; ?>
+    </div>
+    <?php
+}

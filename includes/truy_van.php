@@ -212,3 +212,12 @@ function doi_mat_khau($conn, $id, $matkhau_ma_hoa) {
     $stmt->bind_param("si", $matkhau_ma_hoa, $id);
     $stmt->execute();
 }
+
+// Tài khoản có đang bị khóa (hoặc không còn tồn tại) không
+function tai_khoan_bi_khoa($conn, $id) {
+    $stmt = $conn->prepare("SELECT trangthai FROM NGUOI_DUNG WHERE manguoidung = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $dong = $stmt->get_result()->fetch_assoc();
+    return !$dong || $dong['trangthai'] == 'bi_khoa';
+}

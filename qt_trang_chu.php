@@ -21,5 +21,10 @@ hien_dau_trang('Quản trị');
         ?>
     </div>
 </section>
+
+<br>
+<br>
+<br>
+<br>
 <?php
 hien_cuoi_trang();

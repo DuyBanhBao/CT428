@@ -9,11 +9,17 @@ function chuyen_trang($duongdan) {
     exit;
 }
 
-// Trang nào gọi hàm này thì bắt buộc phải đăng nhập.
-// $goc là phần đường dẫn đi về thư mục gốc: file ở gốc để trống,
-// file trong thư mục xuly/ thì truyền '../'
 function bat_buoc_dang_nhap($goc = '') {
+    global $conn;   // lấy biến kết nối DB đã tạo ở connect.php
+
     if (!isset($_SESSION['id'])) {
+        chuyen_trang($goc . 'dang_nhap.php');
+    }
+
+    // Bị khóa khi đang đăng nhập: xóa thông tin đăng nhập, báo lý do, về trang đăng nhập
+    if (tai_khoan_bi_khoa($conn, $_SESSION['id'])) {
+        unset($_SESSION['id'], $_SESSION['hoten'], $_SESSION['vaitro']);
+        dat_thong_bao('loi', 'Tài khoản của bạn đã bị khóa.');
         chuyen_trang($goc . 'dang_nhap.php');
     }
 }
