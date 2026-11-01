@@ -1,6 +1,4 @@
 <?php
-// Các hàm kiểm tra và làm sạch dữ liệu dùng chung
-
 // Số điện thoại hợp lệ: đúng 10 chữ số, bắt đầu bằng 0
 function sdt_hop_le($sdt) {
     return preg_match('/^0[0-9]{9}$/', $sdt) === 1;

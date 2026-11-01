@@ -1,5 +1,4 @@
 <?php
-// Phiên làm việc (session), múi giờ, chuyển trang, kiểm tra đăng nhập
 session_start();
 date_default_timezone_set('Asia/Ho_Chi_Minh');
 
@@ -32,7 +31,6 @@ function bat_buoc_vai_tro($vaitro, $goc = '') {
     }
 }
 
-// Hai hàm dưới chỉ là "lối tắt" gọi hàm chung ở trên
 function bat_buoc_benh_nhan($goc = '') {
     bat_buoc_vai_tro('benh_nhan', $goc);
 }
@@ -65,5 +63,5 @@ function trang_chu_theo_vai_tro($vaitro) {
     if ($vaitro == 'quan_tri') {
         return 'qt_trang_chu.php';
     }
-    return 'index.php';   // bệnh nhân (và vai trò chưa có trang riêng)
+    return 'index.php';  
 }
